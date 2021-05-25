@@ -1,0 +1,31 @@
+#Organizam librariile
+import cv2
+import numpy as np
+
+#Alegem imaginea de input, in cazul nostru sample.jpg
+image = cv2.imread('TextImage.png')
+
+#Convertim imaginea originala intr-o imagine care sa aiba doar nuante de gri
+ImagineaO = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+
+#Modificam tipul de date
+#Setam pe 32 biti (floating point)
+ImagineaO = np.float32(ImagineaO)
+
+#Aplicam metoda lui Harris, pentru a detecta colturile
+dest = cv2.cornerHarris(ImagineaO, 2, 5, 0.07)
+
+#Marcam rezultatele (pe poza)
+dest = cv2.dilate(dest, None)
+
+#Revenim la imaginea originala
+image[dest > 0.01 * dest.max()] = [0, 0, 255]
+
+#Afisam imaginea dupa ce a trecut prin corner detection
+cv2.imshow('Imaginea cu colturile afisate', image)
+
+#De-alocam orice utilizare a memoriei asociate
+if cv2.waitKey(0) & 0xff == 27:
+    cv2.destroyAllWindows()
+
+#In acest cod folosim doar opencv-python si numpy ca librarii, deoarece nu o mai afisam intr-un cadru de date 'Pandas'
